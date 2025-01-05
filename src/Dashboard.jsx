@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import { collection, onSnapshot } from "firebase/firestore";
 import { Chart, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title, PieController, BarController } from "chart.js";
 
 // Register Chart.js components
