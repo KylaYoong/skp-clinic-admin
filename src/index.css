@@ -54,6 +54,12 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Ensure container alignment for consistent layout */
+.container-fluid {
+  padding: 7px; /* Remove container padding for snug fit */
+}
+
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
