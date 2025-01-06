@@ -166,48 +166,61 @@ function Dashboard() {
       {/* Main Content Section */}
       <section className="content">
         <div className="container-fluid">
-          {/* Widgets Row */}
-          <div className="row">
-            {/* New Patients Widget */}
-            <div className="col-lg-3 col-6">
-              <div className="small-box bg-info">
-                <div className="inner">
-                  <h3>{newPatients}</h3>
-                  <p>New Patients</p>
-                </div>
+         {/* Widgets Row */}
+        <div className="row">
+          {/* New Patients Widget */}
+          <div className="col-lg-3 col-6">
+            <div className="small-box bg-info">
+              <div className="inner">
+                <h3>{newPatients}</h3>
+                <p>New Patients</p>
               </div>
-            </div>
-
-            {/* Completed Patients Widget */}
-            <div className="col-lg-3 col-6">
-              <div className="small-box bg-success">
-                <div className="inner">
-                  <h3>{completedPatients}</h3>
-                  <p>Completed</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Pending Patients Widget */}
-            <div className="col-lg-3 col-6">
-              <div className="small-box bg-warning">
-                <div className="inner">
-                  <h3>{pendingPatients}</h3>
-                  <p>Pending Patients</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Average Wait Time Widget */}
-            <div className="col-lg-3 col-6">
-              <div className="small-box bg-secondary">
-                <div className="inner">
-                  <h3>{averageWaitTime}</h3>
-                  <p>Average Waiting Time</p>
-                </div>
+              <div className="icon">
+                <i className="fas fa-user-plus"></i> {/* New Patient Icon */}
               </div>
             </div>
           </div>
+
+          {/* Completed Patients Widget */}
+          <div className="col-lg-3 col-6">
+            <div className="small-box bg-success">
+              <div className="inner">
+                <h3>{completedPatients}</h3>
+                <p>Completed</p>
+              </div>
+              <div className="icon">
+                <i className="fas fa-check-circle"></i> {/* Completed Icon */}
+              </div>
+            </div>
+          </div>
+
+          {/* Pending Patients Widget */}
+          <div className="col-lg-3 col-6">
+            <div className="small-box bg-warning">
+              <div className="inner">
+                <h3>{pendingPatients}</h3>
+                <p>Pending Patients</p>
+              </div>
+              <div className="icon">
+                <i className="fas fa-clock"></i> {/* Pending Icon */}
+              </div>
+            </div>
+          </div>
+
+          {/* Average Waiting Time Widget */}
+          <div className="col-lg-3 col-6">
+            <div className="small-box bg-secondary">
+              <div className="inner">
+                <h3>{averageWaitTime}</h3>
+                <p>Average Waiting Time</p>
+              </div>
+              <div className="icon">
+                <i className="fas fa-hourglass-half"></i> {/* Waiting Time Icon */}
+              </div>
+            </div>
+          </div>
+        </div>
+
 
           {/* Charts Section */}
           <div className="row mt-4">
