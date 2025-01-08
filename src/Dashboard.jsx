@@ -16,41 +16,80 @@ Chart.register(
   BarController
 );
 
-function Dashboard() {
+function AdminDashboard() {
   // State variables to hold widget data
   const [newPatients, setNewPatients] = useState(0);
   const [completedPatients, setCompletedPatients] = useState(0);
   const [pendingPatients, setPendingPatients] = useState(0);
   const [averageWaitTime, setAverageWaitTime] = useState("0 min");
 
+  // Fetch data from Firestore and update widget values
+  const calculateAverageWaitingTime = (patients) => {
+    const waitingTimes = patients
+      .filter((p) => p.timeIn && p.timeOut)
+      .map((p) => {
+        try {
+          const timeIn = new Date(`1970-01-01T${p.timeIn}`);
+          const timeOut = new Date(`1970-01-01T${p.timeOut}`);
+          return (timeOut - timeIn) / (60 * 1000); // Difference in minutes
+        } catch {
+          return null;
+        }
+      })
+      .filter((time) => time !== null);
+
+    if (waitingTimes.length === 0) return "0 min";
+
+    const avg = waitingTimes.reduce((sum, time) => sum + time, 0) / waitingTimes.length;
+    return `${Math.round(avg)} min`;
+  };
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "queue"), (snapshot) => {
+      const patients = snapshot.docs.map((doc) => doc.data());
+  
+      const today = new Date();
+      console.log("Today's Date:", today);
+  
+      // Filter today's patients
+      const todayPatients = patients.filter((p) => {
+        if (!p.timestamp) {
+          console.log("Patient Missing Timestamp:", p);
+          return false;
+        }
+        const timestamp = p.timestamp.toDate();
+        return (
+          timestamp.getFullYear() === today.getFullYear() &&
+          timestamp.getMonth() === today.getMonth() &&
+          timestamp.getDate() === today.getDate()
+        );
+      });
+  
+      // Count today's completed patients
+      const todayCompletedPatients = todayPatients.filter((p) => p.status === "Completed").length;
+  
+      // Count pending patients
+      const pendingCount = todayPatients.filter((p) => p.status === "Waiting").length;
+  
+      console.log("Today's Patients:", todayPatients);
+      console.log("Today's Completed Patients:", todayCompletedPatients);
+      console.log("Pending Count:", pendingCount);
+  
+      setNewPatients(todayPatients.length);
+      setCompletedPatients(todayCompletedPatients); // Only today's completed patients
+      setPendingPatients(pendingCount);
+      setAverageWaitTime(calculateAverageWaitingTime(todayPatients)); // Only today's patients
+    });
+  
+    return () => unsubscribe();
+  }, []);
+  
+
   // Refs to access and manipulate chart elements
   const pieChartRef = useRef(null);
   const barChartRef = useRef(null);
   const pieChartInstance = useRef(null);
   const barChartInstance = useRef(null);
-
-  // Fetch data from Firestore and update widget values
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "patients"), (snapshot) => {
-      const data = snapshot.docs.map((doc) => doc.data());
-
-      // Calculate metrics for widgets
-      const newCount = data.filter((patient) => patient.status === "new").length;
-      const completedCount = data.filter((patient) => patient.status === "completed").length;
-      const pendingCount = data.filter((patient) => patient.status === "pending").length;
-      const totalWaitTime = data.reduce((acc, patient) => acc + (patient.waitTime || 0), 0);
-      const avgWaitTime = data.length > 0 ? Math.round(totalWaitTime / data.length) : 0;
-
-      // Update state
-      setNewPatients(newCount);
-      setCompletedPatients(completedCount);
-      setPendingPatients(pendingCount);
-      setAverageWaitTime(`${avgWaitTime} min`);
-    });
-
-    // Clean up subscription on unmount
-    return () => unsubscribe();
-  }, []);
 
   // Initialize and update charts
   useEffect(() => {
@@ -254,4 +293,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default AdminDashboard;
