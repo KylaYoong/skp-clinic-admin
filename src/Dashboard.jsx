@@ -49,14 +49,7 @@ function AdminDashboard() {
       const patients = snapshot.docs.map((doc) => doc.data());
   
       const today = new Date();
-      console.log("Today's Date:", today);
-  
-      // Filter today's patients
       const todayPatients = patients.filter((p) => {
-        if (!p.timestamp) {
-          console.log("Patient Missing Timestamp:", p);
-          return false;
-        }
         const timestamp = p.timestamp.toDate();
         return (
           timestamp.getFullYear() === today.getFullYear() &&
@@ -65,20 +58,37 @@ function AdminDashboard() {
         );
       });
   
-      // Count today's completed patients
-      const todayCompletedPatients = todayPatients.filter((p) => p.status === "Completed").length;
+      const weeklyData = Array(7).fill(0).map(() => ({ new: 0, completed: 0 }));
   
-      // Count pending patients
-      const pendingCount = todayPatients.filter((p) => p.status === "Waiting").length;
-  
-      console.log("Today's Patients:", todayPatients);
-      console.log("Today's Completed Patients:", todayCompletedPatients);
-      console.log("Pending Count:", pendingCount);
+      patients.forEach((p) => {
+        const timestamp = p.timestamp.toDate();
+        const dayOfWeek = timestamp.getDay(); // 0 = Sunday, 1 = Monday, ...
+        if (p.status === "Completed") {
+          weeklyData[dayOfWeek].completed += 1;
+        }
+        weeklyData[dayOfWeek].new += 1;
+      });
   
       setNewPatients(todayPatients.length);
-      setCompletedPatients(todayCompletedPatients); // Only today's completed patients
-      setPendingPatients(pendingCount);
-      setAverageWaitTime(calculateAverageWaitingTime(todayPatients)); // Only today's patients
+      setCompletedPatients(todayPatients.filter((p) => p.status === "Completed").length);
+      setPendingPatients(todayPatients.filter((p) => p.status === "Waiting").length);
+      setAverageWaitTime(calculateAverageWaitingTime(todayPatients));
+  
+      // Update Bar Chart Data
+      const newPatientsData = weeklyData.map((d) => d.new);
+      const completedPatientsData = weeklyData.map((d) => d.completed);
+  
+      if (barChartInstance.current) {
+        barChartInstance.current.data.datasets[0].data = newPatientsData;
+        barChartInstance.current.data.datasets[1].data = completedPatientsData;
+        barChartInstance.current.update();
+      }
+  
+      // Update Pie Chart Data
+      if (pieChartInstance.current) {
+        pieChartInstance.current.data.datasets[0].data = [pendingPatients, completedPatients];
+        pieChartInstance.current.update();
+      }
     });
   
     return () => unsubscribe();
@@ -294,3 +304,4 @@ function AdminDashboard() {
 }
 
 export default AdminDashboard;
+
