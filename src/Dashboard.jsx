@@ -30,16 +30,14 @@ function AdminDashboard() {
 
   const calculateWeekDates = () => {
     const today = new Date();
-    const dayOfWeek = today.getDay();
-    const offset = (dayOfWeek === 0) ? -6 : 1 - dayOfWeek; // Start week on Monday
     const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() + offset);
+    startOfWeek.setDate(today.getDate() - today.getDay());
 
     const dates = [];
     for (let i = 0; i < 7; i++) {
       const date = new Date(startOfWeek);
       date.setDate(startOfWeek.getDate() + i);
-      dates.push(`${date.toLocaleDateString()} (${["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][i]})`);
+      dates.push(`${date.toLocaleDateString()} (${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][i]})`);
     }
     setWeekDates(dates);
   };
@@ -89,20 +87,12 @@ function AdminDashboard() {
 
       patients.forEach((p) => {
         const timestamp = p.timestamp.toDate();
-        let dayOfWeek = timestamp.getDay();
-        dayOfWeek = (dayOfWeek === 0) ? 6 : dayOfWeek - 1; // Shift Sunday to the end
+        const dayOfWeek = timestamp.getDay();
         if (p.status === "Completed") {
           weeklyData[dayOfWeek].completed += 1;
         }
         weeklyData[dayOfWeek].new += 1;
       });
-      
-
-      //   if (p.status === "Completed") {
-      //     weeklyData[dayOfWeek].completed += 1;
-      //   }
-      //   weeklyData[dayOfWeek].new += 1;
-      // });
 
       setNewPatients(todayPatients.length);
       setCompletedPatients(todayPatients.filter((p) => p.status === "Completed").length);
@@ -135,11 +125,11 @@ function AdminDashboard() {
       pieChartInstance.current = new Chart(ctx, {
         type: "pie",
         data: {
-          labels: ["Waiting", "Completed"],
+          labels: ["Pending", "Completed"],
           datasets: [
             {
               data: [pendingPatients, completedPatients],
-              backgroundColor: ["#17a2b8", "#28a745"],
+              backgroundColor: ["#ffc108", "#28a745"],
             },
           ],
         },
