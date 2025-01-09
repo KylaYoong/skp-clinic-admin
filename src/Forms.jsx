@@ -103,6 +103,12 @@ function Forms() {
     }
   };
 
+  // Add a deleteDepartment function
+  const deleteDepartment = (departmentToDelete) => {
+    setDepartments((prev) => prev.filter((dept) => dept !== departmentToDelete));
+    alert(`Department "${departmentToDelete}" deleted successfully!`);
+  };
+
   return (
     <div className="content-wrapper">
       <div className="content-header">
@@ -233,6 +239,7 @@ function Forms() {
               </div>
             </div>
 
+
             {/* Queue Data Input Form */}
             <div className="col-md-6">
               <div className="card">
@@ -263,6 +270,30 @@ function Forms() {
                 </div>
               </div>
             </div>
+
+            {/* Delete Departments */}
+            <div className="col-md-6">
+              <div className="card">
+                <div className="card-header">
+                  <h3 className="card-title">Manage Departments</h3>
+                </div>
+                <div className="card-body">
+                  <ul className="list-group">
+                    {departments.map((dept, index) => (
+                      <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                        {dept}
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => deleteDepartment(dept)}
+                        >
+                          Delete
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>  {/* End of Delete Departments */}
           </div>
         </div>
       </section>
