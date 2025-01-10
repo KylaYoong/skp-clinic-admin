@@ -1,0 +1,76 @@
+.content-wrapper {
+    margin-left: 250px; /* Adjust based on your sidebar width */
+    padding: 20px;
+  }
+  
+
+.manage-medicines-container {
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .manage-medicines-container h1 {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .manage-medicines-container input[type="text"] {
+    width: calc(100% - 120px);
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 8px;
+  }
+  
+  .manage-medicines-container button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #28a745;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .manage-medicines-container button:hover {
+    background-color: #218838;
+  }
+  
+  .manage-medicines-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+  }
+  
+  .manage-medicines-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .manage-medicines-list li input {
+    flex: 1;
+    padding: 8px;
+    margin-right: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .manage-medicines-list li button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+  
+  .manage-medicines-list li button:hover {
+    background-color: #c82333;
+  }

@@ -241,7 +241,7 @@ function Forms() {
 
 
             {/* Queue Data Input Form */}
-            <div className="col-md-6">
+            {/* <div className="col-md-6">
               <div className="card">
                 <div className="card-header">
                   <h3 className="card-title">Queue Data Input</h3>
@@ -269,7 +269,7 @@ function Forms() {
                   </form>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Delete Departments */}
             <div className="col-md-6">
