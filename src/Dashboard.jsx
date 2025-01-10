@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { Chart, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title, PieController, BarController } from "chart.js";
 import { db } from "./firebase-config"; // Firestore configuration
+import "./Dashboard.css";
 
 // Register Chart.js components
 Chart.register(
@@ -66,6 +67,41 @@ function AdminDashboard() {
     return `${Math.round(avg)} min`;
   };
 
+  const handleGenerateReport = async () => {
+    try {
+      // Fetch data for the report
+      const reportData = tableData.filter((patient) => {
+        const patientDate = new Date(patient.timestamp);
+        return (
+          patientDate >= startOfWeek && patientDate <= endOfWeek // Define the week range
+        );
+      });
+  
+      // Generate the report (example: CSV format)
+      const csvContent = [
+        ["Date", "Queue No", "Name", "Status"],
+        ...reportData.map((item) => [
+          item.timestamp.toDateString(),
+          item.queueNo,
+          item.name,
+          item.status,
+        ]),
+      ]
+        .map((row) => row.join(","))
+        .join("\n");
+  
+      // Trigger download
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "Weekly_Patient_Report.csv";
+      link.click();
+    } catch (error) {
+      console.error("Error generating report:", error);
+    }
+  };
+
+  
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "queue"), (snapshot) => {
       const patients = snapshot.docs.map((doc) => doc.data());
@@ -192,7 +228,8 @@ function AdminDashboard() {
     };
   }, [pendingPatients, completedPatients, weekDates]);
 
- // chart
+
+ // Chart
  return (
     <div className="content-wrapper">
       {/* Header Section */}
@@ -275,17 +312,20 @@ function AdminDashboard() {
               </div>
             </div>
 
-            {/* Bar Chart Card */}
-            <div className="col-md-8">
-              <div className="card" style={{ height: "400px" }}>
-                <div className="card-header">
-                  <h3 className="card-title">Weekly Patients Trend</h3>
-                </div>
-                <div className="card-body">
-                  <canvas ref={barChartRef} width="600" height="300"></canvas>
-                </div>
+          {/* Bar Chart Card */}
+          <div className="col-md-8">
+            <div className="card" style={{ height: "400px" }}>
+              <div className="card-header d-flex justify-content-between align-items-center">
+                <h3 className="card-title">Weekly Patients Trend</h3>
+                <button className="btn btn-primary btn-sm" onClick={handleGenerateReport}>
+                  Generate Report
+                </button>
+              </div>
+              <div className="card-body">
+                <canvas ref={barChartRef} width="600" height="300"></canvas>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </section>
