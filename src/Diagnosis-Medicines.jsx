@@ -10,16 +10,13 @@ import {
 } from "firebase/firestore";
 import "./Diagnosis-Medicines.css";
 
-
 function DiagnosisMedicines() {
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [medicines, setMedicines] = useState([]);
   const [newMedicine, setNewMedicine] = useState("");
+  const [diagnoses, setDiagnoses] = useState([]);
+  const [newDiagnosis, setNewDiagnosis] = useState("");
 
-  const toggleSidebar = () => {
-    setIsSidebarExpanded((prev) => !prev);
-  };
-
+  // Fetch Medicines
   const fetchMedicines = async () => {
     const medicinesSnapshot = await getDocs(collection(db, "medicines"));
     const medicinesData = medicinesSnapshot.docs.map((doc) => ({
@@ -29,11 +26,28 @@ function DiagnosisMedicines() {
     setMedicines(medicinesData);
   };
 
+  // Fetch Diagnoses
+  const fetchDiagnoses = async () => {
+    const diagnosesSnapshot = await getDocs(collection(db, "diagnoses"));
+    const diagnosesData = diagnosesSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setDiagnoses(diagnosesData);
+  };
+
   const addMedicine = async () => {
     if (!newMedicine) return;
     await addDoc(collection(db, "medicines"), { name: newMedicine });
     setNewMedicine("");
     fetchMedicines();
+  };
+
+  const addDiagnosis = async () => {
+    if (!newDiagnosis) return;
+    await addDoc(collection(db, "diagnoses"), { name: newDiagnosis });
+    setNewDiagnosis("");
+    fetchDiagnoses();
   };
 
   const updateMedicine = async (id, name) => {
@@ -42,43 +56,87 @@ function DiagnosisMedicines() {
     fetchMedicines();
   };
 
+  const updateDiagnosis = async (id, name) => {
+    const diagnosisDoc = doc(db, "diagnoses", id);
+    await updateDoc(diagnosisDoc, { name });
+    fetchDiagnoses();
+  };
+
   const deleteMedicine = async (id) => {
     const medicineDoc = doc(db, "medicines", id);
     await deleteDoc(medicineDoc);
     fetchMedicines();
   };
 
+  const deleteDiagnosis = async (id) => {
+    const diagnosisDoc = doc(db, "diagnoses", id);
+    await deleteDoc(diagnosisDoc);
+    fetchDiagnoses();
+  };
+
   useEffect(() => {
     fetchMedicines();
+    fetchDiagnoses();
   }, []);
 
   return (
-    <div className="manage-medicines-container">
-      <h1>Manage Medicines</h1>
-      <div>
-        <input
-          type="text"
-          placeholder="New Medicine"
-          value={newMedicine}
-          onChange={(e) => setNewMedicine(e.target.value)}
-        />
-        <button onClick={addMedicine}>Add Medicine</button>
+    <div className="manage-container">
+
+      {/* Diagnoses Section */}
+      <div className="manage-section">
+        <h1>Manage Diagnoses</h1>
+        <div>
+          <input
+            type="text"
+            placeholder="New Diagnosis"
+            value={newDiagnosis}
+            onChange={(e) => setNewDiagnosis(e.target.value)}
+          />
+          <button onClick={addDiagnosis}>Add Diagnosis</button>
+        </div>
+        <ul className="manage-list">
+          {diagnoses.map((diagnosis) => (
+            <li key={diagnosis.id}>
+              <input
+                type="text"
+                value={diagnosis.name}
+                onChange={(e) => updateDiagnosis(diagnosis.id, e.target.value)}
+              />
+              <button onClick={() => deleteDiagnosis(diagnosis.id)}>Delete</button>
+            </li>
+          ))}
+        </ul>
       </div>
-      <ul className="manage-medicines-list">
-        {medicines.map((medicine) => (
-          <li key={medicine.id}>
-            <input
-              type="text"
-              value={medicine.name}
-              onChange={(e) => updateMedicine(medicine.id, e.target.value)}
-            />
-            <button onClick={() => deleteMedicine(medicine.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+
+      {/* Medicines Section */}
+      <div className="manage-section">
+        <h1>Manage Medicines</h1>
+        <div>
+          <input
+            type="text"
+            placeholder="New Medicine"
+            value={newMedicine}
+            onChange={(e) => setNewMedicine(e.target.value)}
+          />
+          <button onClick={addMedicine}>Add Medicine</button>
+        </div>
+        <ul className="manage-list">
+          {medicines.map((medicine) => (
+            <li key={medicine.id}>
+              <input
+                type="text"
+                value={medicine.name}
+                onChange={(e) => updateMedicine(medicine.id, e.target.value)}
+              />
+              <button onClick={() => deleteMedicine(medicine.id)}>Delete</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+
     </div>
   );
-  
 }
 
 export default DiagnosisMedicines;
