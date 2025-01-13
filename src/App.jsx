@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route, Link, useLocation } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import Forms from "./Forms";
-import AdminMedicines from "./Diagnosis-Medicines"; // Import the medicines page
+import DiagnosisMedicines from "./Diagnosis-Medicines"; // Import the medicines page
 
 function App() {
   const location = useLocation();
@@ -48,13 +48,13 @@ function App() {
 
               <li className="nav-item">
                 <Link
-                  to="/medicines"
+                  to="/diagnosis-medicines"
                   className={`nav-link ${
-                    location.pathname === "/medicines" ? "active" : ""
+                    location.pathname === "/diagnosis-medicines" ? "active" : ""
                   }`}
                 >
                   <i className="nav-icon fas fa-pills"></i>
-                  <p>Manage Medicines</p>
+                  <p>Diagnosis & Medicines</p>
                 </Link>
               </li>
 
@@ -67,7 +67,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/forms" element={<Forms />} />
-        <Route path="/medicines" element={<AdminMedicines />} /> 
+        <Route path="/diagnosis-medicines" element={<DiagnosisMedicines />} /> 
       </Routes>
     </div>
   );

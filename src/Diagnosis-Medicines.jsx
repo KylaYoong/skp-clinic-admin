@@ -8,10 +8,10 @@ import {
   getDocs,
   doc,
 } from "firebase/firestore";
-import "./AdminMedicines.css";
+import "./Diagnosis-Medicines.css";
 
 
-function AdminMedicines() {
+function DiagnosisMedicines() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [medicines, setMedicines] = useState([]);
   const [newMedicine, setNewMedicine] = useState("");
@@ -81,4 +81,4 @@ function AdminMedicines() {
   
 }
 
-export default AdminMedicines;
+export default DiagnosisMedicines;
