@@ -76,17 +76,14 @@ function App() {
         </div>
       </aside>
 
-       {/* Content Wrapper */}
-       <div className="content-wrapper">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/forms" element={<Forms />} />
-          <Route path="/diagnosis-medicines" element={<DiagnosisMedicines />} />
-          {/* <Route path="/generate-report" element={<GenerateReport />} /> */}
-        </Routes>
-      </div>
+    <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/forms" element={<Forms />} />
+        <Route path="/diagnosis-medicines" element={<DiagnosisMedicines />} />
+      </Routes>
     </div>
   );
-}
+} 
+
 
 export default App;

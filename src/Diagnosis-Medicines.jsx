@@ -83,33 +83,34 @@ function DiagnosisMedicines() {
   }, []);
 
   return (
-    <div className="manage-container">
+    <div className="diag-med">
+      <div className="manage-container">
 
-      {/* Diagnoses Section */}
-      <div className="manage-section">
-        <h1>Manage Diagnoses</h1>
-        <div>
-          <input
-            type="text"
-            placeholder="New Diagnosis"
-            value={newDiagnosis}
-            onChange={(e) => setNewDiagnosis(e.target.value)}
-          />
-          <button onClick={addDiagnosis}>Add Diagnosis</button>
+        {/* Diagnoses Section */}
+        <div className="manage-section">
+          <h1>Manage Diagnoses</h1>
+          <div>
+            <input
+              type="text"
+              placeholder="New Diagnosis"
+              value={newDiagnosis}
+              onChange={(e) => setNewDiagnosis(e.target.value)}
+            />
+            <button onClick={addDiagnosis}>Add Diagnosis</button>
+          </div>
+          <ul className="manage-list">
+            {diagnoses.map((diagnosis) => (
+              <li key={diagnosis.id}>
+                <input
+                  type="text"
+                  value={diagnosis.name}
+                  onChange={(e) => updateDiagnosis(diagnosis.id, e.target.value)}
+                />
+                <button onClick={() => deleteDiagnosis(diagnosis.id)}>Delete</button>
+              </li>
+            ))}
+          </ul>
         </div>
-        <ul className="manage-list">
-          {diagnoses.map((diagnosis) => (
-            <li key={diagnosis.id}>
-              <input
-                type="text"
-                value={diagnosis.name}
-                onChange={(e) => updateDiagnosis(diagnosis.id, e.target.value)}
-              />
-              <button onClick={() => deleteDiagnosis(diagnosis.id)}>Delete</button>
-            </li>
-          ))}
-        </ul>
-      </div>
 
       {/* Medicines Section */}
       <div className="manage-section">
@@ -136,8 +137,7 @@ function DiagnosisMedicines() {
           ))}
         </ul>
       </div>
-
-
+    </div>
     </div>
   );
 }

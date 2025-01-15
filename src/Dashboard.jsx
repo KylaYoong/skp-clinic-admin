@@ -227,108 +227,108 @@ function AdminDashboard() {
     };
   }, [pendingPatients, completedPatients, weekDates]);
 
- // Chart
- return (
-    <div className="content-wrapper">
-      {/* Header Section */}
-      <div className="content-header">
-        <div className="container-fluid">
-          <h1 className="m-0">Welcome to SKP Clinic Admin</h1>
+
+  // Chart
+  return (
+    <div className="dashboard">
+      <div className="content-wrapper">
+        {/* Header Section */}
+        <div className="content-header">
+          <div className="container-fluid">
+            <h1 className="m-0">Welcome to SKP Clinic Admin</h1>
+          </div>
         </div>
+
+        {/* Main Content Section */}
+        <section className="content">
+          <div className="container-fluid">
+          {/* Widgets Row */}
+          <div className="row">
+            {/* New Patients Widget */}
+            <div className="col-lg-3 col-6">
+              <div className="small-box bg-info">
+                <div className="inner">
+                  <h3>{newPatients}</h3>
+                  <p>New Patients</p>
+                </div>
+                <div className="icon">
+                  <i className="fas fa-user-plus"></i> {/* New Patient Icon */}
+                </div>
+              </div>
+            </div>
+
+            {/* Completed Patients Widget */}
+            <div className="col-lg-3 col-6">
+              <div className="small-box bg-success">
+                <div className="inner">
+                  <h3>{completedPatients}</h3>
+                  <p>Completed</p>
+                </div>
+                <div className="icon">
+                  <i className="fas fa-check-circle"></i> {/* Completed Icon */}
+                </div>
+              </div>
+            </div>
+
+            {/* Pending Patients Widget */}
+            <div className="col-lg-3 col-6">
+              <div className="small-box bg-warning">
+                <div className="inner">
+                  <h3>{pendingPatients}</h3>
+                  <p>Pending Patients</p>
+                </div>
+                <div className="icon">
+                  <i className="fas fa-clock"></i> {/* Pending Icon */}
+                </div>
+              </div>
+            </div>
+
+            {/* Average Waiting Time Widget */}
+            <div className="col-lg-3 col-6">
+              <div className="small-box bg-secondary">
+                <div className="inner">
+                  <h3>{averageWaitTime}</h3>
+                  <p>Average Waiting Time</p>
+                </div>
+                <div className="icon">
+                  <i className="fas fa-hourglass-half"></i> {/* Waiting Time Icon */}
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+            {/* Charts Section */}
+            <div className="row mt-4">
+              {/* Pie Chart Card */}
+              <div className="col-md-4">
+                <div className="card" style={{ height: "400px" }}>
+                  <div className="card-header">
+                    <h3 className="card-title">Queue Summary</h3>
+                  </div>
+                  <div className="card-body d-flex justify-content-center align-items-center">
+                    <canvas ref={pieChartRef} width="300" height="300"></canvas>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bar Chart Card */}
+              <div className="col-md-8">
+                <div className="card" style={{ height: "400px" }}>
+                  <div className="card-header">
+                    <h3 className="card-title">Weekly Patients Trend</h3>
+                  </div>
+                  <div className="card-body">
+                    <canvas ref={barChartRef} width="600" height="300"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
-
-      {/* Main Content Section */}
-      <section className="content">
-        <div className="container-fluid">
-         {/* Widgets Row */}
-        <div className="row">
-          {/* New Patients Widget */}
-          <div className="col-lg-3 col-6">
-            <div className="small-box bg-info">
-              <div className="inner">
-                <h3>{newPatients}</h3>
-                <p>New Patients</p>
-              </div>
-              <div className="icon">
-                <i className="fas fa-user-plus"></i> {/* New Patient Icon */}
-              </div>
-            </div>
-          </div>
-
-          {/* Completed Patients Widget */}
-          <div className="col-lg-3 col-6">
-            <div className="small-box bg-success">
-              <div className="inner">
-                <h3>{completedPatients}</h3>
-                <p>Completed</p>
-              </div>
-              <div className="icon">
-                <i className="fas fa-check-circle"></i> {/* Completed Icon */}
-              </div>
-            </div>
-          </div>
-
-          {/* Pending Patients Widget */}
-          <div className="col-lg-3 col-6">
-            <div className="small-box bg-warning">
-              <div className="inner">
-                <h3>{pendingPatients}</h3>
-                <p>Pending Patients</p>
-              </div>
-              <div className="icon">
-                <i className="fas fa-clock"></i> {/* Pending Icon */}
-              </div>
-            </div>
-          </div>
-
-          {/* Average Waiting Time Widget */}
-          <div className="col-lg-3 col-6">
-            <div className="small-box bg-secondary">
-              <div className="inner">
-                <h3>{averageWaitTime}</h3>
-                <p>Average Waiting Time</p>
-              </div>
-              <div className="icon">
-                <i className="fas fa-hourglass-half"></i> {/* Waiting Time Icon */}
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-          {/* Charts Section */}
-          <div className="row mt-4">
-            {/* Pie Chart Card */}
-            <div className="col-md-4">
-              <div className="card" style={{ height: "400px" }}>
-                <div className="card-header">
-                  <h3 className="card-title">Queue Summary</h3>
-                </div>
-                <div className="card-body d-flex justify-content-center align-items-center">
-                  <canvas ref={pieChartRef} width="300" height="300"></canvas>
-                </div>
-              </div>
-            </div>
-
-          {/* Bar Chart Card */}
-          <div className="col-md-8">
-            <div className="card" style={{ height: "400px" }}>
-              <div className="card-header d-flex justify-content-between align-items-center">
-                <h3 className="card-title">Weekly Patients Trend</h3>
-                <button className="btn btn-primary btn-sm" onClick={handleGenerateReport}>
-                  Generate Report
-                </button>
-              </div>
-              <div className="card-body">
-                <canvas ref={barChartRef} width="600" height="300"></canvas>
-              </div>
-            </div>
-          </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
+      </div>
+    );
+  }
 
 export default AdminDashboard;

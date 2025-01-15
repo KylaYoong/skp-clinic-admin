@@ -1,32 +1,32 @@
-.manage-container {
+.forms .manage-container {
     margin-left: 250px;
     padding: 20px;
     width: calc(100% - 250px);
   }
   
-  .manage-section {
+.forms .manage-section {
     max-width: 1200px;
     margin: 0 auto;
   }
   
-  .manage-section h1 {
+.forms .manage-section h1 {
     margin-bottom: 30px;
     font-size: 24px;
     font-weight: 500;
   }
   
-  .manage-section h2 {
+.forms .manage-section h2 {
     margin-bottom: 20px;
     font-size: 20px;
     font-weight: 500;
   }
   
-  .manage-row {
+  .forms  .manage-row {
     display: flex;
     gap: 30px;
   }
   
-  .manage-column {
+  .forms .manage-column {
     flex: 1;
     background: white;
     border-radius: 8px;
@@ -34,17 +34,17 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
-  .input-group {
+  .forms  .input-group {
     margin-bottom: 20px;
   }
   
-  .input-group label {
+  .forms  .input-group label {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
   }
   
-  .input-group input,
+  .forms  .input-group input,
   .input-group select {
     width: 100%;
     padding: 8px 12px;
@@ -53,31 +53,31 @@
     font-size: 14px;
   }
   
-  .input-group input:focus,
+  .forms  .input-group input:focus,
   .input-group select:focus {
     outline: none;
     border-color: #4a90e2;
   }
   
-  .radio-group {
+  .forms .radio-group {
     display: flex;
     gap: 20px;
   }
   
-  .radio-group label {
+  .forms .radio-group label {
     display: flex;
     align-items: center;
     gap: 8px;
     font-weight: normal;
   }
   
-  .department-list {
+  .forms .department-list {
     list-style: none;
     padding: 0;
     margin: 0;
   }
   
-  .department-list li {
+  .forms  .department-list li {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -85,11 +85,11 @@
     border-bottom: 1px solid #eee;
   }
   
-  .department-list li:last-child {
+  .forms .department-list li:last-child {
     border-bottom: none;
   }
   
-  button {
+  .forms  button {
     padding: 8px 16px;
     border-radius: 4px;
     border: none;
@@ -98,36 +98,36 @@
     transition: background-color 0.2s;
   }
   
-  .btn-submit {
+  .forms .btn-submit {
     background: #4CAF50;
     color: white;
     width: 100%;
   }
   
-  .btn-submit:hover {
+  .forms .btn-submit:hover {
     background: #45a049;
   }
   
-  .btn-add {
+  .forms .btn-add {
     background: #4a90e2;
     color: white;
   }
   
-  .btn-add:hover {
+  .forms .btn-add:hover {
     background: #357abd;
   }
   
-  .btn-delete {
+  .forms .btn-delete {
     background: #dc3545;
     color: white;
     padding: 6px 12px;
   }
   
-  .btn-delete:hover {
+  .forms .btn-delete:hover {
     background: #c82333;
   }
   
-  button:disabled {
+  .forms  button:disabled {
     background: #cccccc;
     cursor: not-allowed;
   }

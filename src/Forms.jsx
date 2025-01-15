@@ -186,6 +186,7 @@ function Forms() {
 
 
   return (
+    <div className="forms">
     <div className="content-wrapper">
       <div className="content-header">
         <div className="container-fluid">
@@ -345,6 +346,7 @@ function Forms() {
           </div>
         </div>
       </section>
+    </div>
     </div>
   );
 }

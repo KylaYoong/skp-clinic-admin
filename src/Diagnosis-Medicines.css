@@ -1,19 +1,10 @@
 /* Sidebar Width Adjustments */
-.wrapper {
+.diag-med .wrapper {
   display: flex;
   height: 100vh;
-  width: 100%;
 }
 
-.content-wrapper {
-  margin-left: 250px; /* Ensure content starts after the sidebar */ /* Sidebar width */
-  padding: 20px;
-  width: calc(100% - 250px); /* Adjust content width */ /* Account for sidebar width */
-}
-
-
-.main-sidebar {
-  width: 250px; /* Sidebar width */
+.diag-med .main-sidebar {
   position: fixed;
   top: 0;
   bottom: 0;
@@ -23,16 +14,18 @@
 }
 
 /* Flex layout for content sections */
-.manage-container {
+.diag-med .manage-container {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
-  max-width: 1200px;
+  gap: 30px;
   margin: auto;
   margin-top: 20px;
+  margin-left: 250px; /* Matches the sidebar width */
+  padding: 20px;
+  width: calc(100% - 250px); /* Adjust content width - Account for sidebar width */
 }
 
-.manage-section {
+.diag-med .manage-section {
   flex: 1;
   padding: 20px;
   background-color: #f9f9f9;
@@ -40,14 +33,14 @@
   border-radius: 8px;
 }
 
-.manage-section h1 {
+.diag-med .manage-section h1 {
   font-size: 24px;
   font-weight: bold;
   text-align: center;
   margin-bottom: 20px;
 }
 
-.manage-section input[type="text"] {
+.diag-med .manage-section input[type="text"] {
   width: calc(100% - 120px);
   padding: 8px;
   border: 1px solid #ddd;
@@ -55,7 +48,7 @@
   margin-right: 8px;
 }
 
-.manage-section button {
+.diag-med .manage-section button {
   padding: 8px 12px;
   border: none;
   border-radius: 4px;
@@ -65,23 +58,23 @@
   cursor: pointer;
 }
 
-.manage-section button:hover {
+.diag-med .manage-section button:hover {
   background-color: #218838;
 }
 
-.manage-list {
+.diag-med .manage-list {
   list-style: none;
   padding: 0;
   margin-top: 20px;
 }
 
-.manage-list li {
+.diag-med .manage-list li {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
 }
 
-.manage-list li input {
+.diag-med .manage-list li input {
   flex: 1;
   padding: 8px;
   margin-right: 8px;
@@ -89,7 +82,7 @@
   border-radius: 4px;
 }
 
-.manage-list li button {
+.diag-med .manage-list li button {
   background-color: #dc3545;
   color: white;
   border: none;
@@ -98,6 +91,7 @@
   cursor: pointer;
 }
 
-.manage-list li button:hover {
+.diag-med .manage-list li button:hover {
   background-color: #c82333;
 }
+
