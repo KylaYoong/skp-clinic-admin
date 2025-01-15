@@ -166,25 +166,7 @@ function Forms() {
     }
   };
 
-  // Add new department
-  // const addDepartment = () => {
-  //   if (newDepartment && !departments.includes(newDepartment)) {
-  //     setDepartments((prev) => [...prev, newDepartment]);
-  //     setNewDepartment("");
-  //     alert("New department added successfully!");
-  //   } else {
-  //     alert("Please enter a valid and unique department name.");
-  //   }
-  // };
-
-  // Add a deleteDepartment function
-  // const deleteDepartment = (departmentToDelete) => {
-  //   setDepartments((prev) => prev.filter((dept) => dept !== departmentToDelete));
-  //   alert(`Department "${departmentToDelete}" deleted successfully!`);
-  // };
-
-
-
+  
   return (
     <div className="forms">
     <div className="content-wrapper">

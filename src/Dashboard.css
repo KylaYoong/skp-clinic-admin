@@ -2,3 +2,9 @@
 .dashboard .card-header .btn {
   margin-left: auto; /* Push button to the right */
 }
+
+.dashboard .content-wrapper {
+  background-color: #f5f7fa;
+  min-height: 100vh; /* Ensure it covers the full height */
+  padding-bottom: 20px; /* Add padding to avoid cutoff */
+}
