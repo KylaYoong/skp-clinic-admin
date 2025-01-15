@@ -12,13 +12,86 @@ function Forms() {
     department: "",
   });
 
-  const [queueData, setQueueData] = useState({
-    patientID: "",
-  });
+  // const [queueData, setQueueData] = useState({
+  //   patientID: "",
+  // });
 
-  const [departments, setDepartments] = useState(["HR", "IT", "SCM"]);
+  // Initialize state to store departments fetched from Firestore
+  const [departments, setDepartments] = useState([]);
+  // Initialize state to hold the value of a new department being added
   const [newDepartment, setNewDepartment] = useState("");
+
   const [loading, setLoading] = useState(false);
+
+  // Function to fetch all departments from Firestore
+  const fetchDepartments = async () => {
+    try {
+      // Retrieve all documents from the "departments" collection in Firestore
+      const snapshot = await getDocs(collection(db, "departments"));
+      // Map through the documents and create an array of objects with id and name
+      const deptData = snapshot.docs.map((doc) => ({
+        id: doc.id, // Firestore document ID
+        name: doc.data().name, // Name field from Firestore document
+      }));
+      // Update the state with the fetched department data
+      setDepartments(deptData);
+    } catch (error) {
+      // Log any error that occurs during fetching
+      console.error("Error fetching departments:", error);
+    }
+  };
+  
+  // useEffect to fetch departments when the component mounts
+  useEffect(() => {
+    fetchDepartments(); // Call the fetchDepartments function
+  }, []); // Empty dependency array ensures this runs only once on component mount
+
+  // Function to add a new department to Firestore
+  const addDepartment = async () => {
+    if (newDepartment.trim() === "") {
+      alert("Please enter a valid department name.");
+      return;
+    }
+  
+    if (departments.some((dept) => dept.name === newDepartment.trim())) {
+      alert("This department already exists.");
+      return;
+    }
+  
+    try {
+      // Attempt to add the new department to Firestore
+      const newDeptDoc = await addDoc(collection(db, "departments"), {
+        name: newDepartment.trim(),
+      });
+  
+      setDepartments((prev) => [
+        ...prev,
+        { id: newDeptDoc.id, name: newDepartment.trim() },
+      ]);
+  
+      setNewDepartment("");
+      alert("New department added successfully!");
+    } catch (error) {
+      console.error("Error adding department:", error.message);
+      alert(`Failed to add department: ${error.message}`);
+    }
+  };
+  
+  
+  
+  // Function to delete a department from Firestore
+  const deleteDepartment = async (id) => {
+    try {
+      // Delete the department document from the "departments" collection
+      await deleteDoc(doc(db, "departments", id));
+      // Update the state by removing the deleted department from the list
+      setDepartments((prev) => prev.filter((dept) => dept.id !== id));
+      alert("Department deleted successfully!"); // Notify the user
+    } catch (error) {
+      // Log any error that occurs during deletion
+      console.error("Error deleting department:", error);
+    }
+  };
 
   // Handle input changes for patient form
   const handlePatientInputChange = (e) => {
@@ -32,16 +105,6 @@ function Forms() {
     setQueueData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Add new department
-  const addDepartment = () => {
-    if (newDepartment && !departments.includes(newDepartment)) {
-      setDepartments((prev) => [...prev, newDepartment]);
-      setNewDepartment("");
-      alert("New department added successfully!");
-    } else {
-      alert("Please enter a valid and unique department name.");
-    }
-  };
 
   // Submit patient data to Firestore
   const handlePatientSubmit = async (e) => {
@@ -103,11 +166,24 @@ function Forms() {
     }
   };
 
+  // Add new department
+  // const addDepartment = () => {
+  //   if (newDepartment && !departments.includes(newDepartment)) {
+  //     setDepartments((prev) => [...prev, newDepartment]);
+  //     setNewDepartment("");
+  //     alert("New department added successfully!");
+  //   } else {
+  //     alert("Please enter a valid and unique department name.");
+  //   }
+  // };
+
   // Add a deleteDepartment function
-  const deleteDepartment = (departmentToDelete) => {
-    setDepartments((prev) => prev.filter((dept) => dept !== departmentToDelete));
-    alert(`Department "${departmentToDelete}" deleted successfully!`);
-  };
+  // const deleteDepartment = (departmentToDelete) => {
+  //   setDepartments((prev) => prev.filter((dept) => dept !== departmentToDelete));
+  //   alert(`Department "${departmentToDelete}" deleted successfully!`);
+  // };
+
+
 
   return (
     <div className="content-wrapper">
@@ -210,14 +286,15 @@ function Forms() {
                         value={patientData.department}
                         onChange={handlePatientInputChange}
                         required
-                      >
+                        >
                         <option value="">Select</option>
-                        {departments.map((dept, index) => (
-                          <option key={index} value={dept}>
-                            {dept}
+                        {departments.map((dept) => (
+                          <option key={dept.id} value={dept.name}>
+                            {dept.name}
                           </option>
                         ))}
                       </select>
+
                       <div className="mt-2 d-flex align-items-center">
                         <input
                           type="text"
@@ -226,10 +303,11 @@ function Forms() {
                           onChange={(e) => setNewDepartment(e.target.value)}
                           placeholder="Add new department"
                         />
-                        <button type="button" className="btn btn-secondary" onClick={addDepartment}>
+                        <button onClick={addDepartment} className="btn-add">
                           +
                         </button>
                       </div>
+
                     </div>
                     <button type="submit" className="btn btn-success" disabled={loading}>
                       {loading ? "Submitting..." : "Submit"}
@@ -240,37 +318,6 @@ function Forms() {
             </div>
 
 
-            {/* Queue Data Input Form */}
-            {/* <div className="col-md-6">
-              <div className="card">
-                <div className="card-header">
-                  <h3 className="card-title">Queue Data Input</h3>
-                </div>
-                <div className="card-body">
-                  <form onSubmit={handleQueueSubmit}>
-                    <div className="mb-3">
-                      <label htmlFor="patientID" className="form-label">
-                        Patient ID
-                      </label>
-                      <input
-                        type="text"
-                        id="patientID"
-                        name="patientID"
-                        className="form-control"
-                        value={queueData.patientID}
-                        onChange={handleQueueInputChange}
-                        placeholder="Enter Patient ID"
-                        required
-                      />
-                    </div>
-                    <button type="submit" className="btn btn-primary" disabled={loading}>
-                      {loading ? "Submitting..." : "Add to Queue"}
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div> */}
-
             {/* Delete Departments */}
             <div className="col-md-6">
               <div className="card">
@@ -278,19 +325,20 @@ function Forms() {
                   <h3 className="card-title">Manage Departments</h3>
                 </div>
                 <div className="card-body">
-                  <ul className="list-group">
-                    {departments.map((dept, index) => (
-                      <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                        {dept}
-                        <button
-                          className="btn btn-danger btn-sm"
-                          onClick={() => deleteDepartment(dept)}
-                        >
-                          Delete
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
+                <ul className="list-group">
+                  {departments.map((dept) => (
+                    <li key={dept.id} className="list-group-item d-flex justify-content-between align-items-center">
+                      {dept.name}
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => deleteDepartment(dept.id)}
+                      >
+                        Delete
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+
                 </div>
               </div>
             </div>  {/* End of Delete Departments */}
