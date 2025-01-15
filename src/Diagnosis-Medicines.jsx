@@ -11,20 +11,11 @@ import {
 import "./Diagnosis-Medicines.css";
 
 function DiagnosisMedicines() {
-  const [medicines, setMedicines] = useState([]);
-  const [newMedicine, setNewMedicine] = useState("");
   const [diagnoses, setDiagnoses] = useState([]);
   const [newDiagnosis, setNewDiagnosis] = useState("");
 
-  // Fetch Medicines
-  const fetchMedicines = async () => {
-    const medicinesSnapshot = await getDocs(collection(db, "medicines"));
-    const medicinesData = medicinesSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setMedicines(medicinesData);
-  };
+  const [medicines, setMedicines] = useState([]);
+  const [newMedicine, setNewMedicine] = useState("");
 
   // Fetch Diagnoses
   const fetchDiagnoses = async () => {
@@ -36,6 +27,17 @@ function DiagnosisMedicines() {
     setDiagnoses(diagnosesData);
   };
 
+  // Fetch Medicines
+  const fetchMedicines = async () => {
+    const medicinesSnapshot = await getDocs(collection(db, "medicines"));
+    const medicinesData = medicinesSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setMedicines(medicinesData);
+  };
+
+
   const addMedicine = async () => {
     if (!newMedicine) return;
     await addDoc(collection(db, "medicines"), { name: newMedicine });
@@ -45,10 +47,11 @@ function DiagnosisMedicines() {
 
   const addDiagnosis = async () => {
     if (!newDiagnosis) return;
-    await addDoc(collection(db, "diagnoses"), { name: newDiagnosis });
-    setNewDiagnosis("");
-    fetchDiagnoses();
+      await addDoc(collection(db, "diagnoses"), { name: newDiagnosis });
+      setNewDiagnosis("");
+      fetchDiagnoses();
   };
+  
 
   const updateMedicine = async (id, name) => {
     const medicineDoc = doc(db, "medicines", id);

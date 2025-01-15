@@ -100,7 +100,6 @@ function AdminDashboard() {
       console.error("Error generating report:", error);
     }
   };
-
   
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "queue"), (snapshot) => {
@@ -228,7 +227,6 @@ function AdminDashboard() {
     };
   }, [pendingPatients, completedPatients, weekDates]);
 
-
  // Chart
  return (
     <div className="content-wrapper">
@@ -334,4 +332,3 @@ function AdminDashboard() {
 }
 
 export default AdminDashboard;
-

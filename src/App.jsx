@@ -3,6 +3,7 @@ import { Routes, Route, Link, useLocation } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import Forms from "./Forms";
 import DiagnosisMedicines from "./Diagnosis-Medicines"; // Import the medicines page
+// import GenerateReport from "./GenerateReport"
 
 function App() {
   const location = useLocation();
@@ -58,17 +59,32 @@ function App() {
                 </Link>
               </li>
 
+              {/* <li className="nav-item">
+                <Link
+                  to="/generate-report"
+                  className={`nav-link ${
+                    location.pathname === "/generate-report" ? "active" : ""
+                  }`}
+                >
+                  <i className="nav-icon fas fa-file-alt"></i>
+                  <p>Report</p>
+                </Link>
+              </li> */}
+
             </ul>
           </nav>
         </div>
       </aside>
 
-      {/* Content Wrapper */}
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/forms" element={<Forms />} />
-        <Route path="/diagnosis-medicines" element={<DiagnosisMedicines />} /> 
-      </Routes>
+       {/* Content Wrapper */}
+       <div className="content-wrapper">
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/forms" element={<Forms />} />
+          <Route path="/diagnosis-medicines" element={<DiagnosisMedicines />} />
+          {/* <Route path="/generate-report" element={<GenerateReport />} /> */}
+        </Routes>
+      </div>
     </div>
   );
 }

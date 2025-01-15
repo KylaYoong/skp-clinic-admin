@@ -1,0 +1,133 @@
+.manage-container {
+    margin-left: 250px;
+    padding: 20px;
+    width: calc(100% - 250px);
+  }
+  
+  .manage-section {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .manage-section h1 {
+    margin-bottom: 30px;
+    font-size: 24px;
+    font-weight: 500;
+  }
+  
+  .manage-section h2 {
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 500;
+  }
+  
+  .manage-row {
+    display: flex;
+    gap: 30px;
+  }
+  
+  .manage-column {
+    flex: 1;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .input-group {
+    margin-bottom: 20px;
+  }
+  
+  .input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  .input-group input,
+  .input-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .input-group input:focus,
+  .input-group select:focus {
+    outline: none;
+    border-color: #4a90e2;
+  }
+  
+  .radio-group {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: normal;
+  }
+  
+  .department-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .department-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .department-list li:last-child {
+    border-bottom: none;
+  }
+  
+  button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+  }
+  
+  .btn-submit {
+    background: #4CAF50;
+    color: white;
+    width: 100%;
+  }
+  
+  .btn-submit:hover {
+    background: #45a049;
+  }
+  
+  .btn-add {
+    background: #4a90e2;
+    color: white;
+  }
+  
+  .btn-add:hover {
+    background: #357abd;
+  }
+  
+  .btn-delete {
+    background: #dc3545;
+    color: white;
+    padding: 6px 12px;
+  }
+  
+  .btn-delete:hover {
+    background: #c82333;
+  }
+  
+  button:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+  }
