@@ -1,12 +1,14 @@
-import React, { useState } from "react";
-import { fetchReportData } from "./reportUtils"; // Utility for querying Firestore
+import React, { useState, useEffect } from "react";
+import { collection, query, where, getDocs, onSnapshot } from "firebase/firestore";
+// import { fetchReportData } from "./reportUtils"; // Utility for querying Firestore
+import { fieldMappings, fetchReportDataRealTime } from "./reportUtils";
 import "./Reports.css"; // Custom styles for the Reports page
+
 import { jsPDF } from "jspdf";
 import * as XLSX from "xlsx";
 
 
 const Reports = () => {
-  // State for selected fields and date range
   const [selectedFields, setSelectedFields] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -19,7 +21,7 @@ const Reports = () => {
     );
   };
 
-  const generateReport = async () => {
+  const generateReport = () => {
     if (!startDate || !endDate) {
       alert("Please select both start and end dates.");
       return;
@@ -28,16 +30,44 @@ const Reports = () => {
       alert("Please select at least one field.");
       return;
     }
-
+  
     try {
-      const data = await fetchReportData(startDate, endDate, selectedFields);
-      setReportData(data);
-      alert("Report generated! Data is ready for export.");
+      // Stop previous listeners if any
+      if (window.unsubscribeReport) {
+        window.unsubscribeReport();
+      }
+  
+      // Start listening for real-time updates
+      window.unsubscribeReport = fetchReportDataRealTime(
+        startDate,
+        endDate,
+        selectedFields,
+        (data) => {
+          if (data.length === 0) {
+            alert("No data found for the selected criteria.");
+          } else {
+            setReportData(data);
+            console.log("Real-time report data updated:", data);
+          }
+        }
+      );
+  
+      alert("Real-time data sync started. Generating report!");
     } catch (error) {
       console.error("Error generating report:", error);
       alert("Failed to generate the report. Please try again.");
     }
   };
+  
+  // Ensure cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      if (window.unsubscribeReport) {
+        window.unsubscribeReport();
+      }
+    };
+  }, []);
+
 
   const exportToPDF = () => {
     if (reportData.length === 0) {
@@ -46,14 +76,12 @@ const Reports = () => {
     }
 
     const doc = new jsPDF();
-    doc.text("Report", 10, 10);
-
-    // Add table data to PDF
     const headers = selectedFields.map((field) => field.toUpperCase());
     const rows = reportData.map((item) =>
       selectedFields.map((field) => item[field] || "")
     );
 
+    doc.text("Report", 10, 10);
     let y = 20;
     doc.text(headers.join(" | "), 10, y);
     y += 10;
@@ -61,7 +89,6 @@ const Reports = () => {
       doc.text(row.join(" | "), 10, y);
       y += 10;
     });
-
     doc.save("report.pdf");
   };
 
@@ -76,37 +103,24 @@ const Reports = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
     XLSX.writeFile(workbook, "report.xlsx");
   };
-
   
+
+
 
   return (
     <div className="report-container">
       <h2>Generate Report</h2>
       <div className="field-selection">
+
         <label>
           <input
             type="checkbox"
-            value="diagnosis"
+            value="emp ID"
             onChange={handleFieldChange}
           />{" "}
-          Diagnosis
+          Emp ID
         </label>
-        <label>
-          <input
-            type="checkbox"
-            value="medicine"
-            onChange={handleFieldChange}
-          />{" "}
-          Medicine
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            value="amount"
-            onChange={handleFieldChange}
-          />{" "}
-          Amount
-        </label>
+
         <label>
           <input
             type="checkbox"
@@ -115,6 +129,55 @@ const Reports = () => {
           />{" "}
           Department
         </label>
+
+        <label>
+          <input
+            type="checkbox"
+            value="name"
+            onChange={handleFieldChange}
+          />{" "}
+          Name
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            value="diagnosis"
+            // value="consultationData.diagnosis"
+            onChange={handleFieldChange}
+          />{" "}
+          Diagnosis
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            value="medicines"
+            onChange={handleFieldChange}
+          />{" "}
+          Medicine
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            value="amount"
+            // value="consultationData.amount"
+            onChange={handleFieldChange}
+          />{" "}
+          Amount
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            value="MC"
+            // value="consultationData.mc"
+            onChange={handleFieldChange}
+          />{" "}
+          MC?
+        </label>
+
       </div>
 
       <div className="date-range">

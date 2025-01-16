@@ -83,30 +83,16 @@ const Reports = () => {
     <div className="report-container">
       <h2>Generate Report</h2>
       <div className="field-selection">
+
         <label>
           <input
             type="checkbox"
-            value="diagnosis"
+            value="emp ID"
             onChange={handleFieldChange}
           />{" "}
-          Diagnosis
+          Emp ID
         </label>
-        <label>
-          <input
-            type="checkbox"
-            value="medicine"
-            onChange={handleFieldChange}
-          />{" "}
-          Medicine
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            value="amount"
-            onChange={handleFieldChange}
-          />{" "}
-          Amount
-        </label>
+
         <label>
           <input
             type="checkbox"
@@ -115,6 +101,52 @@ const Reports = () => {
           />{" "}
           Department
         </label>
+
+        <label>
+          <input
+            type="checkbox"
+            value="name"
+            onChange={handleFieldChange}
+          />{" "}
+          Name
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            value="diagnosis"
+            onChange={handleFieldChange}
+          />{" "}
+          Diagnosis
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            value="medicines"
+            onChange={handleFieldChange}
+          />{" "}
+          Medicine
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            value="amount"
+            onChange={handleFieldChange}
+          />{" "}
+          Amount
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            value="MC"
+            onChange={handleFieldChange}
+          />{" "}
+          MC?
+        </label>
+
       </div>
 
       <div className="date-range">
