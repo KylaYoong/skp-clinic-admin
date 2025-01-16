@@ -9,11 +9,13 @@ import * as XLSX from "xlsx";
 
 
 const Reports = () => {
+  // Initializes state variables for managing selected fields, date range, and report data
   const [selectedFields, setSelectedFields] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [reportData, setReportData] = useState([]);
 
+  // Updates the selectedFields array when a checkbox is toggled
   const handleFieldChange = (event) => {
     const { value, checked } = event.target;
     setSelectedFields((prev) =>
@@ -21,6 +23,7 @@ const Reports = () => {
     );
   };
 
+  // Validates that the user has selected both dates and at least one field before generating the report.
   const generateReport = () => {
     if (!startDate || !endDate) {
       alert("Please select both start and end dates.");
@@ -31,6 +34,7 @@ const Reports = () => {
       return;
     }
   
+    // Starts a real-time listener for the report and handles cleanup for previous listeners
     try {
       // Stop previous listeners if any
       if (window.unsubscribeReport) {
