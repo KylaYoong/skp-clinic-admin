@@ -1,21 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { collection, query, where, getDocs, onSnapshot } from "firebase/firestore";
-// import { fetchReportData } from "./reportUtils"; // Utility for querying Firestore
+import React, { useState, useEffect, useRef } from "react";
 import { fieldMappings, fetchReportDataRealTime } from "./reportUtils";
-import "./Reports.css"; // Custom styles for the Reports page
-
+import "./Reports.css";
 import { jsPDF } from "jspdf";
 import * as XLSX from "xlsx";
 
-
 const Reports = () => {
-  // Initializes state variables for managing selected fields, date range, and report data
   const [selectedFields, setSelectedFields] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [reportData, setReportData] = useState([]);
+  const unsubscribeRef = useRef(null);
 
-  // Updates the selectedFields array when a checkbox is toggled
+  // Field display names mapping
+  const fieldDisplayNames = {
+    name: "Name",
+    department: "Department",
+    "consultationData.diagnosis": "Diagnosis",
+    "consultationData.medicines": "Medicine",
+    "consultationData.amount": "Amount",
+    "consultationData.mc": "MC?",
+  };
+
   const handleFieldChange = (event) => {
     const { value, checked } = event.target;
     setSelectedFields((prev) =>
@@ -23,8 +28,7 @@ const Reports = () => {
     );
   };
 
-  // Validates that the user has selected both dates and at least one field before generating the report.
-  const generateReport = () => {
+  const generateReport = async () => {
     if (!startDate || !endDate) {
       alert("Please select both start and end dates.");
       return;
@@ -33,16 +37,14 @@ const Reports = () => {
       alert("Please select at least one field.");
       return;
     }
-  
-    // Starts a real-time listener for the report and handles cleanup for previous listeners
+
     try {
-      // Stop previous listeners if any
-      if (window.unsubscribeReport) {
-        window.unsubscribeReport();
+      // Cleanup previous subscription
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
       }
-  
-      // Start listening for real-time updates
-      window.unsubscribeReport = fetchReportDataRealTime(
+
+      const unsubscribe = await fetchReportDataRealTime(
         startDate,
         endDate,
         selectedFields,
@@ -55,23 +57,22 @@ const Reports = () => {
           }
         }
       );
-  
+      
+      unsubscribeRef.current = unsubscribe;
       alert("Real-time data sync started. Generating report!");
     } catch (error) {
       console.error("Error generating report:", error);
       alert("Failed to generate the report. Please try again.");
     }
   };
-  
-  // Ensure cleanup on component unmount
+
   useEffect(() => {
     return () => {
-      if (window.unsubscribeReport) {
-        window.unsubscribeReport();
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
       }
     };
   }, []);
-
 
   const exportToPDF = () => {
     if (reportData.length === 0) {
@@ -80,7 +81,9 @@ const Reports = () => {
     }
 
     const doc = new jsPDF();
-    const headers = selectedFields.map((field) => field.toUpperCase());
+    const headers = selectedFields.map(
+      (field) => fieldDisplayNames[field] || field.toUpperCase()
+    );
     const rows = reportData.map((item) =>
       selectedFields.map((field) => item[field] || "")
     );
@@ -107,81 +110,22 @@ const Reports = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
     XLSX.writeFile(workbook, "report.xlsx");
   };
-  
-
-
 
   return (
     <div className="report-container">
       <h2>Generate Report</h2>
       <div className="field-selection">
-
-        <label>
-          <input
-            type="checkbox"
-            value="emp ID"
-            onChange={handleFieldChange}
-          />{" "}
-          Emp ID
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            value="department"
-            onChange={handleFieldChange}
-          />{" "}
-          Department
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            value="name"
-            onChange={handleFieldChange}
-          />{" "}
-          Name
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            value="diagnosis"
-            // value="consultationData.diagnosis"
-            onChange={handleFieldChange}
-          />{" "}
-          Diagnosis
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            value="medicines"
-            onChange={handleFieldChange}
-          />{" "}
-          Medicine
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            value="amount"
-            // value="consultationData.amount"
-            onChange={handleFieldChange}
-          />{" "}
-          Amount
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            value="MC"
-            // value="consultationData.mc"
-            onChange={handleFieldChange}
-          />{" "}
-          MC?
-        </label>
-
+        {Object.entries(fieldMappings).map(([key, value]) => (
+          <label key={key}>
+            <input
+              type="checkbox"
+              value={value}
+              checked={selectedFields.includes(value)}
+              onChange={handleFieldChange}
+            />{" "}
+            {key}
+          </label>
+        ))}
       </div>
 
       <div className="date-range">
@@ -202,12 +146,12 @@ const Reports = () => {
           />
         </label>
       </div>
-      
+
       <div className="report-actions">
         <button onClick={generateReport}>Generate Report</button>
         <div className="export-buttons">
-            <button onClick={exportToPDF}>Export as PDF</button>
-            <button onClick={exportToExcel}>Export as Excel</button>
+          <button onClick={exportToPDF}>Export as PDF</button>
+          <button onClick={exportToExcel}>Export as Excel</button>
         </div>
       </div>
 
@@ -216,16 +160,18 @@ const Reports = () => {
         <table>
           <thead>
             <tr>
-              {selectedFields.map((field, index) => (
-                <th key={index}>{field.toUpperCase()}</th>
+              {selectedFields.map((field) => (
+                <th key={field}>
+                  {fieldDisplayNames[field] || field}
+                </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {reportData.map((row, index) => (
-              <tr key={index}>
-                {selectedFields.map((field, subIndex) => (
-                  <td key={subIndex}>{row[field]}</td>
+            {reportData.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {selectedFields.map((field) => (
+                  <td key={field}>{row[field] || ""}</td>
                 ))}
               </tr>
             ))}
