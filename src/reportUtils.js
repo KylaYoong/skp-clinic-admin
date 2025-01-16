@@ -65,6 +65,9 @@ export async function fetchReportDataRealTime(startDate, endDate, selectedFields
                 } else {
                   filteredRecord[field] = "";
                 }
+              } else if (subField === "mc") {
+                // Handle MC field specifically - convert to "yes"/"no" based on presence of date
+                filteredRecord[field] = nestedValue?.[subField] ? "yes" : "no";
               } else {
                 // Handle other consultationData fields
                 filteredRecord[field] = nestedValue?.[subField]?.toString() || "";
