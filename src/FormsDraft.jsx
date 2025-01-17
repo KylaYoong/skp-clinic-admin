@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, addDoc, deleteDoc, getDocs, query, where, doc } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "./firebase-config";
 
 
@@ -9,10 +9,7 @@ function Forms() {
     name: "",
     gender: "",
     dob: "",
-    icPassport: "",
-    nationality: "",
     department: "",
-    company: "",
   });
 
   const [departments, setDepartments] = useState([]);  // Initialize state to store departments fetched from Firestore
@@ -23,8 +20,6 @@ function Forms() {
 
   const companies = ["SKPJB", "SKPBM", "SKPBP"];
 
-  // manage and track the loading state of the application, 
-  // specifically during asynchronous operations like form submissions or data fetching
   const [loading, setLoading] = useState(false);
 
   // Function to fetch all departments from Firestore
@@ -44,6 +39,11 @@ function Forms() {
       console.error("Error fetching departments:", error);
     }
   };
+  
+  // useEffect to fetch departments when the component mounts
+  useEffect(() => {
+    fetchDepartments(); // Call the fetchDepartments function
+  }, []); // Empty dependency array ensures this runs only once on component mount
 
   // Function to add a new department to Firestore
   const addDepartment = async () => {
@@ -79,90 +79,22 @@ function Forms() {
   // Function to delete a department from Firestore
   const deleteDepartment = async (id) => {
     try {
-      // Reference the specific document in the "departments" collection
-      const departmentDoc = doc(db, "departments", id);
-  
-      // Delete the department document
-      await deleteDoc(departmentDoc);
-  
+      // Delete the department document from the "departments" collection
+      await deleteDoc(doc(db, "departments", id));
       // Update the state by removing the deleted department from the list
       setDepartments((prev) => prev.filter((dept) => dept.id !== id));
-  
-      alert("Department deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting department:", error.message);
-      alert(`Failed to delete department: ${error.message}`);
-    }
-  };
-  
-
-  // Function to fetch all nationalities from Firestore
-  const fetchNationalities = async () => {
-    try {
-      // Retrieve all documents from the "nationalities" collection in Firestore
-      const snapshot = await getDocs(collection(db, "nationalities"));
-      // Map through the documents and create an array of objects with id and name
-      const nationalityData = snapshot.docs.map((doc) => ({
-        id: doc.id, // Firestore document ID
-        name: doc.data().name, // Name field from Firestore document
-      }));
-      // Update the state with the fetched nationality data
-      setNationalities(nationalityData);
-    } catch (error) {
-      // Log any error that occurs during fetching
-      console.error("Error fetching nationalities:", error);
-    }
-  };
-
-  // useEffect to fetch nationality when the component mounts
-  useEffect(() => {
-    fetchNationalities(); // Call the fetchNationalities function
-  }, []); // Empty dependency array ensures this runs only once on component mount
-
-  // Function to add a new nationalit to Firestore
-  const addNationality = async () => {
-    if (newNationality.trim() === "") {
-      alert("Please enter a valid nationality.");
-      return;
-    }
-  
-    if (nationalities.some((natl) => natl.name === newNationality.trim())) {
-      alert("This nationality already exists.");
-      return;
-    }
-  
-    try {
-      // Attempt to add the new nationalit to Firestore
-      const newNationalityDoc = await addDoc(collection(db, "nationalities"), {
-        name: newNationality.trim(),
-      });
-  
-      setNationalities((prev) => [
-        ...prev,
-        { id: newNationalityDoc.id, name: newNationality.trim() },
-      ]);
-  
-      setNewNationality("");
-      alert("New nationality added successfully!");
-    } catch (error) {
-      console.error("Error adding nationality:", error.message);
-      alert(`Failed to add nationality: ${error.message}`);
-    }
-  };
-    
-  // Function to delete a nationality from Firestore
-  const deleteNationality = async (id) => {
-    try {
-      // Delete the nationality document from the "nationalities" collection
-      await deleteDoc(doc(db, "nationalities", id));
-      // Update the state by removing the deleted department from the list
-      setNationalities((prev) => prev.filter((natl) => natl.id !== id));
-      alert("Nationality deleted successfully!"); // Notify the user
+      alert("Department deleted successfully!"); // Notify the user
     } catch (error) {
       // Log any error that occurs during deletion
-      console.error("Error deleting nationality:", error);
+      console.error("Error deleting department:", error);
     }
   };
+
+
+  const fetchNationalities = async () => {
+    // Fetch nationalities logic here if using Firestore (similar to departments)
+  };
+
 
   // Handle input changes for patient form
   const handlePatientInputChange = (e) => {
@@ -171,10 +103,10 @@ function Forms() {
   };
 
   // Handle input changes for queue form
-  // const handleQueueInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setQueueData((prev) => ({ ...prev, [name]: value }));
-  // };
+  const handleQueueInputChange = (e) => {
+    const { name, value } = e.target;
+    setQueueData((prev) => ({ ...prev, [name]: value }));
+  };
 
 
   // Submit patient data to Firestore
@@ -197,10 +129,7 @@ function Forms() {
         name: "",
         gender: "",
         dob: "",
-        icPassport: "",
-        nationality: "",
         department: "",
-        company: "",
       });
     } catch (error) {
       console.error("Error adding patient data:", error);
@@ -209,13 +138,6 @@ function Forms() {
       setLoading(false);
     }
   };
-
-  // useEffect to fetch departments when the component mounts
-  useEffect(() => {
-    fetchDepartments();
-    fetchNationalities();
-  }, []);  // Empty dependency array ensures this runs only once on component mount
-
 
   // Submit queue data to Firestore
   const handleQueueSubmit = async (e) => {
@@ -247,14 +169,14 @@ function Forms() {
     }
   };
 
- 
+  
 
   return (
     <div className="forms">
     <div className="content-wrapper">
       <div className="content-header">
         <div className="container-fluid">
-          {/* <h1 className="m-0">Forms</h1> */}
+          <h1 className="m-0">Forms</h1>
         </div>
       </div>
 
@@ -269,8 +191,6 @@ function Forms() {
                 </div>
                 <div className="card-body">
                   <form onSubmit={handlePatientSubmit}>
-
-                    {/* Employee ID */}
                     <div className="mb-3">
                       <label htmlFor="employeeID" className="form-label">
                         Employee ID
@@ -286,8 +206,6 @@ function Forms() {
                         required
                       />
                     </div>
-
-                    {/* Name */}
                     <div className="mb-3">
                       <label htmlFor="name" className="form-label">
                         Name
@@ -303,8 +221,6 @@ function Forms() {
                         required
                       />
                     </div>
-
-                    {/* Gender */}
                     <div className="mb-3">
                       <label className="form-label">Gender</label>
                       <div>
@@ -332,8 +248,6 @@ function Forms() {
                         <label htmlFor="female" className="ms-2">Female</label>
                       </div>
                     </div>
-
-                    {/* Date of Birth */}
                     <div className="mb-3">
                       <label htmlFor="dob" className="form-label">
                         Date of Birth
@@ -349,61 +263,9 @@ function Forms() {
                       />
                     </div>
 
-                    {/* IC/Passport No. */}
-                    <div className="mb-3">
-                      <label htmlFor="icPassport" className="form-label">
-                        IC/Passport No.
-                      </label>
-                      <input
-                        type="text"
-                        id="icPassport"
-                        name="icPassport"
-                        className="form-control"
-                        value={patientData.icPassport}
-                        onChange={handlePatientInputChange}
-                        placeholder="Enter IC/Passport No."
-                      />
-                    </div>
 
-                    {/* Nationality dropdown */}
-                    <div className="mb-3">
-                      <label htmlFor="nationality" className="form-label">
-                        Nationality
-                      </label>
-                      <select
-                        id="nationality"
-                        name="nationality"
-                        className="form-control"
-                        value={patientData.nationality}
-                        onChange={handlePatientInputChange}
-                      >
-                        <option value="">Select</option>
-                        {nationalities.map((natl) => (
-                          <option key={natl.id} value={natl.name}>
-                            {natl.name}
-                          </option>
-                        ))}
-                      </select>
 
-                      <div className="mt-2 d-flex align-items-center">
-                        <input
-                          type="text"
-                          className="form-control me-2"
-                          value={newNationality}
-                          onChange={(e) => setNewNationality(e.target.value)}
-                          placeholder="Add new nationality"
-                        />
-                        <button
-                          type="button"
-                          onClick={addNationality}
-                          className="btn-add"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
 
-                    {/* Department */}
                     <div className="mb-3">
                       <label htmlFor="department" className="form-label">
                         Department
@@ -415,7 +277,7 @@ function Forms() {
                         value={patientData.department}
                         onChange={handlePatientInputChange}
                         required
-                      >
+                        >
                         <option value="">Select</option>
                         {departments.map((dept) => (
                           <option key={dept.id} value={dept.name}>
@@ -432,49 +294,19 @@ function Forms() {
                           onChange={(e) => setNewDepartment(e.target.value)}
                           placeholder="Add new department"
                         />
-                        <button
-                          type="button"
-                          onClick={addDepartment}
-                          className="btn-add"
-                        >
+                        <button onClick={addDepartment} className="btn-add">
                           +
                         </button>
                       </div>
                     </div>
-
-                    {/* Company */}
-                    <div className="mb-3">
-                      <label htmlFor="company" className="form-label">
-                        Company
-                      </label>
-                      <select
-                        id="company"
-                        name="company"
-                        className="form-control"
-                        value={patientData.company}
-                        onChange={handlePatientInputChange}
-                      >
-                        <option value="">Select</option>
-                        {companies.map((company, index) => (
-                          <option key={index} value={company}>
-                            {company}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Submit Button */}
-                    <button
-                      type="submit"
-                      className="btn btn-success"
-                      disabled={loading}
-                    >
+                    
+                    <button type="submit" className="btn btn-success" disabled={loading}>
                       {loading ? "Submitting..." : "Submit"}
                     </button>
                   </form>
                 </div>
               </div>
-            </div>  {/* End of Register Patient Form */}
+            </div>
 
 
             {/* Delete Departments */}
@@ -497,17 +329,16 @@ function Forms() {
                     </li>
                   ))}
                 </ul>
+
                 </div>
               </div>
             </div>  {/* End of Delete Departments */}
-
           </div>
         </div>
       </section>
     </div>
-  </div>
+    </div>
   );
-} 
-
+}
 
 export default Forms;
