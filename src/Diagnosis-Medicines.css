@@ -17,7 +17,7 @@
 .diag-med .manage-container {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
+  gap: 30px;
   margin: auto;
   margin-top: 20px;
   margin-left: 250px; /* Matches the sidebar width */
