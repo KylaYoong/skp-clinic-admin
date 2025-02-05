@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { collection, addDoc, deleteDoc, getDocs, query, where, doc } from "firebase/firestore";
+import { collection, addDoc, deleteDoc, getDocs, query, where, doc, writeBatch } from "firebase/firestore";
 import { db } from "./firebase-config";
-
+import * as XLSX from "xlsx";
 
 function Forms() {
   const [patientData, setPatientData] = useState({
@@ -26,6 +26,7 @@ function Forms() {
   // manage and track the loading state of the application, 
   // specifically during asynchronous operations like form submissions or data fetching
   const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState(null); // State for the uploaded Excel file
 
   // Function to fetch all departments from Firestore
   const fetchDepartments = async () => {
@@ -114,10 +115,6 @@ function Forms() {
     }
   };
 
-  // useEffect to fetch nationality when the component mounts
-  useEffect(() => {
-    fetchNationalities(); // Call the fetchNationalities function
-  }, []); // Empty dependency array ensures this runs only once on component mount
 
   // Function to add a new nationalit to Firestore
   const addNationality = async () => {
@@ -242,6 +239,61 @@ function Forms() {
     } catch (error) {
       console.error("Error adding queue data:", error);
       alert("Error adding to queue. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to handle file selection
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]); // Store file in state
+  };
+
+  const importExcel = async () => {
+    if (!file) {
+      alert("Please select an Excel file first.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const reader = new FileReader();
+      reader.readAsBinaryString(file);
+      reader.onload = async (e) => {
+        const binaryStr = e.target.result;
+        const workbook = XLSX.read(binaryStr, { type: "binary" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const data = XLSX.utils.sheet_to_json(sheet, { range: 1 });
+
+        // Firestore batch operation
+        const batch = writeBatch(db);
+
+        data.forEach((row) => {
+          const docRef = doc(collection(db, "employees"));
+          batch.set(docRef, {
+            employeeID: row["Emp ID"] || "",
+            name: row["Name"] || "",
+            gender: row["Gender"] || "",
+            race: row["Race"] || "",
+            icPassport: row["NRIC No."] || "",
+            passportNo: row["Passport No."] || "",
+            nationality: row["Nationality"] || "",
+            department: row["Department"] || "",
+            base: row["Base"] || "",
+            company: row["Company"] || "",
+            timestamp: new Date(),
+          });
+        });
+
+        // Commit batch operation
+        await batch.commit();
+        console.log("Data imported successfully:", data); // ✅ Debugging step
+        alert("Data imported successfully!");
+      };
+    } catch (error) {
+      console.error("Error importing Excel file:", error);
+      alert("Error processing file.");
     } finally {
       setLoading(false);
     }
@@ -478,7 +530,7 @@ function Forms() {
 
 
             {/* Delete Departments */}
-            <div className="col-md-6">
+            {/* <div className="col-md-6">
               <div className="card">
                 <div className="card-header">
                   <h3 className="card-title">Manage Departments</h3>
@@ -499,7 +551,57 @@ function Forms() {
                 </ul>
                 </div>
               </div>
-            </div>  {/* End of Delete Departments */}
+            </div>   */}
+            {/* End of Delete Departments */}
+
+
+            {/* Excel File Upload Section */}
+            {/* <div className="col-md-6">
+            <div className="card">
+                <div className="card-header">
+                  <h3 className="card-title">Import Excel File - Employee Data</h3>
+                </div>
+                <div className="card-body">
+                <ul className="list-group">
+                  {departments.map((dept) => (
+                    <li key={dept.id} className="list-group-item d-flex justify-content-between align-items-center">
+                      {dept.name}
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => importexcel(dept.id)}
+                      >
+                        Delete
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                </div>
+              </div>
+            </div> */}
+
+            <div className="col-md-6">
+                <div className="card">
+                  <div className="card-header">
+                    <h3 className="card-title">Import Excel File - Employee Data</h3>
+                  </div>
+                  <div className="card-body">
+                    <input
+                      type="file"
+                      accept=".xlsx, .xls"
+                      className="form-control mb-2"
+                      onChange={handleFileChange}
+                    />
+                    <button
+                      className="btn btn-primary"
+                      onClick={importExcel}
+                      disabled={loading}
+                    >
+                      {loading ? "Importing..." : "Import Data"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
 
           </div>
         </div>

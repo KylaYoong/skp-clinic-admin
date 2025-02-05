@@ -74,30 +74,6 @@ const Reports = () => {
     };
   }, []);
 
-  const exportToPDF = () => {
-    if (reportData.length === 0) {
-      alert("No data to export. Generate the report first.");
-      return;
-    }
-
-    const doc = new jsPDF();
-    const headers = selectedFields.map(
-      (field) => fieldDisplayNames[field] || field.toUpperCase()
-    );
-    const rows = reportData.map((item) =>
-      selectedFields.map((field) => item[field] || "")
-    );
-
-    doc.text("Report", 10, 10);
-    let y = 20;
-    doc.text(headers.join(" | "), 10, y);
-    y += 10;
-    rows.forEach((row) => {
-      doc.text(row.join(" | "), 10, y);
-      y += 10;
-    });
-    doc.save("report.pdf");
-  };
 
   const exportToExcel = () => {
     if (reportData.length === 0) {
@@ -150,7 +126,6 @@ const Reports = () => {
       <div className="report-actions">
         <button onClick={generateReport}>Generate Report</button>
         <div className="export-buttons">
-          <button onClick={exportToPDF}>Export as PDF</button>
           <button onClick={exportToExcel}>Export as Excel</button>
         </div>
       </div>
