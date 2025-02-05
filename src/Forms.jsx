@@ -264,7 +264,8 @@ function Forms() {
         const workbook = XLSX.read(binaryStr, { type: "binary" });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
-        const data = XLSX.utils.sheet_to_json(sheet, { range: 1 });
+        const data = XLSX.utils.sheet_to_json(sheet, { range: 1 });  // start from 2nd row (exclude the column header) - for SKP
+        // const data = XLSX.utils.sheet_to_json(sheet, { defval: "" }); // Use defval to handle missing values - for SKPBM
 
         // Firestore batch operation
         const batch = writeBatch(db);
@@ -272,6 +273,7 @@ function Forms() {
         data.forEach((row) => {
           const docRef = doc(collection(db, "employees"));
           batch.set(docRef, {
+            // for SKP
             employeeID: row["Emp ID"] || "",
             name: row["Name"] || "",
             gender: row["Gender"] || "",
@@ -283,12 +285,23 @@ function Forms() {
             base: row["Base"] || "",
             company: row["Company"] || "",
             timestamp: new Date(),
+
+            // for SKPBM
+            // employeeID: row["Employee No."] || "",
+            // name: row["Name"] || "",
+            // icPassport: row["NRIC No."] || "",
+            // passportNo: row["Passport No."] || "",
+            // nationality: row["Nationality"] || "",
+            // department: row["Department"] || "",
+            // gender: row["Gender"] || "",
+            // company: row["COMPANY"] || "",
+            // timestamp: new Date(),
           });
         });
 
         // Commit batch operation
         await batch.commit();
-        console.log("Data imported successfully:", data); // ✅ Debugging step
+        console.log("Data imported successfully:", data);  // Log imported data
         alert("Data imported successfully!");
       };
     } catch (error) {
