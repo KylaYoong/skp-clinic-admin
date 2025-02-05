@@ -235,7 +235,7 @@ function AdminDashboard() {
         {/* Header Section */}
         <div className="content-header">
           <div className="container-fluid">
-            <h1 className="m-0">Welcome to SKP Clinic Admin</h1>
+            <h1 className="m-0">Your Admin Dashboard for SKP Clinic</h1>
           </div>
         </div>
 
