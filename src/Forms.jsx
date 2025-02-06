@@ -595,7 +595,7 @@ function Forms() {
             <div className="col-md-6">
                 <div className="card">
                   <div className="card-header">
-                    <h3 className="card-title">Import Excel File - Employee Data</h3>
+                    <h3 className="card-title">Upload Employee Data from Excel</h3>
                   </div>
                   <div className="card-body">
                     <input
