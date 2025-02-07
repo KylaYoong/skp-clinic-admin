@@ -179,21 +179,35 @@ function Forms() {
     e.preventDefault();
     setLoading(true);
     try {
-      if (!patientData.employeeID || !patientData.name || !patientData.gender || !patientData.dob || !patientData.department) {
-        alert("Please fill in all required fields!");
+      if (!patientData.employeeID || !patientData.name || !patientData.gender || !patientData.department) {
+        alert("Please fill in all required fields! (DOB is optional)");
         return;
       }
 
-      await addDoc(collection(db, "employees"), {
-        ...patientData,
+      const patientToSave = {
+        employeeID: patientData.employeeID,
+        name: patientData.name,
+        gender: patientData.gender,
+        icPassport: patientData.icPassport,
+        nationality: patientData.nationality,
+        department: patientData.department,
+        company: patientData.company,
         timestamp: new Date(),
-      });
+      };
+  
+      // Only include DOB if it is provided
+      if (patientData.dob) {
+        patientToSave.dob = patientData.dob;
+      }
+
+      await addDoc(collection(db, "employees"), patientToSave);
+
       alert("Patient registered successfully!");
       setPatientData({
         employeeID: "",
         name: "",
         gender: "",
-        dob: "",
+        dob: "", // Reset DOB but remain optional
         icPassport: "",
         nationality: "",
         department: "",
@@ -398,7 +412,7 @@ function Forms() {
                       </div>
                     </div>
 
-                    {/* Date of Birth */}
+                    {/* Date of Birth (Optional) */}
                     <div className="mb-3">
                       <label htmlFor="dob" className="form-label">
                         Date of Birth
@@ -410,7 +424,6 @@ function Forms() {
                         className="form-control"
                         value={patientData.dob}
                         onChange={handlePatientInputChange}
-                        required
                       />
                     </div>
 
